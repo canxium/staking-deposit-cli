@@ -48,15 +48,16 @@ def generate_keys_arguments_decorator(function: Callable[..., Any]) -> Callable[
     to obtain the necessary arguments for the generate_keys() subcommand.
     '''
     decorators = [
-        jit_option(
-            callback=captive_prompt_callback(
-                lambda num: validate_int_range(num, 1, 2**32),
-                lambda: load_text(['num_validators', 'prompt'], func='generate_keys_arguments_decorator')
-            ),
-            help=lambda: load_text(['num_validators', 'help'], func='generate_keys_arguments_decorator'),
-            param_decls="--num_validators",
-            prompt=lambda: load_text(['num_validators', 'prompt'], func='generate_keys_arguments_decorator'),
-        ),
+        # jit_option(
+        #     callback=captive_prompt_callback(
+        #         lambda num: validate_int_range(num, 1, 2**32),
+        #         lambda: load_text(['num_validators', 'prompt'], func='generate_keys_arguments_decorator')
+        #     ),
+        #     default=os.getenv('NUM_VALIDATORS'),
+        #     help=lambda: load_text(['num_validators', 'help'], func='generate_keys_arguments_decorator'),
+        #     param_decls="--num_validators",
+        #     prompt=lambda: load_text(['num_validators', 'prompt'], func='generate_keys_arguments_decorator'),
+        # ),
         jit_option(
             default=os.getcwd(),
             help=lambda: load_text(['folder', 'help'], func='generate_keys_arguments_decorator'),
@@ -80,30 +81,31 @@ def generate_keys_arguments_decorator(function: Callable[..., Any]) -> Callable[
                 list(key for key in ALL_CHAINS.keys() if key != PRATER)
             ),
         ),
-        jit_option(
-            callback=captive_prompt_callback(
-                validate_password_strength,
-                lambda:load_text(['keystore_password', 'prompt'], func='generate_keys_arguments_decorator'),
-                lambda:load_text(['keystore_password', 'confirm'], func='generate_keys_arguments_decorator'),
-                lambda: load_text(['keystore_password', 'mismatch'], func='generate_keys_arguments_decorator'),
-                True,
-            ),
-            help=lambda: load_text(['keystore_password', 'help'], func='generate_keys_arguments_decorator'),
-            hide_input=True,
-            param_decls='--keystore_password',
-            prompt=lambda: load_text(['keystore_password', 'prompt'], func='generate_keys_arguments_decorator'),
-        ),
-        jit_option(
-            callback=captive_prompt_callback(
-                lambda address: validate_eth1_withdrawal_address(None, None, address),
-                lambda: load_text(['arg_execution_address', 'prompt'], func='generate_keys_arguments_decorator'),
-                lambda: load_text(['arg_execution_address', 'confirm'], func='generate_keys_arguments_decorator'),
-                lambda: load_text(['arg_execution_address', 'mismatch'], func='generate_keys_arguments_decorator'),
-            ),
-            default=None,
-            help=lambda: load_text(['arg_execution_address', 'help'], func='generate_keys_arguments_decorator'),
-            param_decls=['--execution_address', '--eth1_withdrawal_address'],
-        ),
+        # jit_option(
+        #     callback=captive_prompt_callback(
+        #         validate_password_strength,
+        #         lambda:load_text(['keystore_password', 'prompt'], func='generate_keys_arguments_decorator'),
+        #         lambda:load_text(['keystore_password', 'confirm'], func='generate_keys_arguments_decorator'),
+        #         lambda: load_text(['keystore_password', 'mismatch'], func='generate_keys_arguments_decorator'),
+        #         True,
+        #     ),
+        #     default=os.getenv('KEYSTORE_PASSWORD'),
+        #     help=lambda: load_text(['keystore_password', 'help'], func='generate_keys_arguments_decorator'),
+        #     hide_input=True,
+        #     param_decls='--keystore_password',
+        #     prompt=lambda: load_text(['keystore_password', 'prompt'], func='generate_keys_arguments_decorator'),
+        # ),
+        # jit_option(
+        #     callback=captive_prompt_callback(
+        #         lambda address: validate_eth1_withdrawal_address(None, None, address),
+        #         lambda: load_text(['arg_execution_address', 'prompt'], func='generate_keys_arguments_decorator'),
+        #         lambda: load_text(['arg_execution_address', 'confirm'], func='generate_keys_arguments_decorator'),
+        #         lambda: load_text(['arg_execution_address', 'mismatch'], func='generate_keys_arguments_decorator'),
+        #     ),
+        #     default=None,
+        #     help=lambda: load_text(['arg_execution_address', 'help'], func='generate_keys_arguments_decorator'),
+        #     param_decls=['--execution_address', '--eth1_withdrawal_address'],
+        # ),
     ]
     for decorator in reversed(decorators):
         function = decorator(function)
@@ -112,9 +114,10 @@ def generate_keys_arguments_decorator(function: Callable[..., Any]) -> Callable[
 
 @click.command()
 @click.pass_context
-def generate_keys(ctx: click.Context, validator_start_index: int,
-                  num_validators: int, folder: str, chain: str, keystore_password: str,
-                  execution_address: HexAddress, **kwargs: Any) -> None:
+def generate_keys(ctx: click.Context, validator_start_index: int, folder: str, chain: str, **kwargs: Any) -> None:
+    num_validators = int(os.getenv('NUM_VALIDATORS'))
+    keystore_password = os.getenv('KEYSTORE_PASSWORD')
+    execution_address = os.getenv('WITHDRAWAL_ADDRESS')
     mnemonic = ctx.obj['mnemonic']
     mnemonic_password = ctx.obj['mnemonic_password']
     amounts = [MAX_DEPOSIT_AMOUNT] * num_validators
@@ -122,9 +125,7 @@ def generate_keys(ctx: click.Context, validator_start_index: int,
     chain_setting = get_chain_setting(chain)
     if not os.path.exists(folder):
         os.mkdir(folder)
-    click.clear()
-    click.echo(RHINO_0)
-    click.echo(load_text(['msg_key_creation']))
+    click.echo(load_text(['msg_key_creation']) + ' Number of validators: ' + str(num_validators) + ", password: " + keystore_password + ", withdrawal address: " + execution_address)
     credentials = CredentialList.from_mnemonic(
         mnemonic=mnemonic,
         mnemonic_password=mnemonic_password,

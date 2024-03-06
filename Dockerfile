@@ -14,6 +14,4 @@ RUN python3 setup.py install
 
 ARG cli_command
 
-ENTRYPOINT [ "python3", "./staking_deposit/deposit.py" ]
-
-CMD [ $cli_command ]
+CMD [ "python3", "./staking_deposit/deposit.py", "--non_interactive", "--language=English", "new-mnemonic", "--mnemonic_language=english", "--chain=canxium"]

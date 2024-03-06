@@ -1,4 +1,5 @@
 import click
+import os
 from typing import (
     Any,
 )
@@ -46,17 +47,27 @@ languages = get_first_options(MNEMONIC_LANG_OPTIONS)
 )
 @generate_keys_arguments_decorator
 def new_mnemonic(ctx: click.Context, mnemonic_language: str, **kwargs: Any) -> None:
+    if not os.getenv('NUM_VALIDATORS'):
+        click.echo('Error: Invalid NUM_VALIDATORS env')
+        exit(1)
+    if not os.getenv('KEYSTORE_PASSWORD'):
+        click.echo('Error: Invalid KEYSTORE_PASSWORD env')
+        exit(1)
+    if not os.getenv('WITHDRAWAL_ADDRESS'):
+        click.echo('Error: Invalid WITHDRAWAL_ADDRESS env')
+        exit(1)
+    
     mnemonic = get_mnemonic(language=mnemonic_language, words_path=WORD_LISTS_PATH)
-    test_mnemonic = ''
-    while mnemonic != reconstruct_mnemonic(test_mnemonic, WORD_LISTS_PATH):
-        click.clear()
-        click.echo(load_text(['msg_mnemonic_presentation']))
-        click.echo('\n\n%s\n\n' % mnemonic)
-        click.pause(load_text(['msg_press_any_key']))
-
-        click.clear()
-        test_mnemonic = click.prompt(load_text(['msg_mnemonic_retype_prompt']) + '\n\n')
+    # test_mnemonic = ''
+    # while mnemonic != reconstruct_mnemonic(test_mnemonic, WORD_LISTS_PATH):
     click.clear()
+    click.echo(load_text(['msg_mnemonic_presentation']))
+    click.echo('\n\n%s\n\n' % mnemonic)
+    # click.pause(load_text(['msg_press_any_key']))
+
+    # click.clear()
+    # test_mnemonic = click.prompt(load_text(['msg_mnemonic_retype_prompt']) + '\n\n')
+    # click.clear()
     # Do NOT use mnemonic_password.
     ctx.obj = {'mnemonic': mnemonic, 'mnemonic_password': ''}
     ctx.params['validator_start_index'] = 0

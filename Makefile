@@ -1,7 +1,7 @@
 VENV_NAME?=venv
 VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
 PYTHON=${VENV_NAME}/bin/python3.8
-DOCKER_IMAGE="ethereum/staking-deposit-cli:latest"
+DOCKER_IMAGE="canxium/staking-deposit-cli:latest"
 
 help:
 	@echo "clean - remove build and Python file artifacts"
@@ -54,7 +54,7 @@ build_linux: venv_build
 	$(VENV_ACTIVATE) && pyinstaller ./build_configs/linux/build.spec
 
 build_docker:
-	@docker build --pull -t $(DOCKER_IMAGE) .
+	@docker build -t $(DOCKER_IMAGE) .
 
 run_docker:
 	@docker run -it --rm $(DOCKER_IMAGE) $(filter-out $@,$(MAKECMDGOALS))
