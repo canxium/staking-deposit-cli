@@ -54,7 +54,7 @@ build_linux: venv_build
 	$(VENV_ACTIVATE) && pyinstaller ./build_configs/linux/build.spec
 
 build_docker:
-	@docker build -t $(DOCKER_IMAGE) .
+	@docker build --platform linux/arm64,linux/amd64 -t $(DOCKER_IMAGE) .
 
 run_docker:
 	@docker run -it --rm $(DOCKER_IMAGE) $(filter-out $@,$(MAKECMDGOALS))

@@ -17,7 +17,7 @@ SEPOLIA = 'sepolia'
 ZHEJIANG = 'zhejiang'
 HOLESKY = 'holesky'
 CANXIUM = 'canxium'
-CERIUM = 'cerium'
+PRASEODY = 'praseody'
 
 # Mainnet setting
 MainnetSetting = BaseChainSetting(
@@ -45,9 +45,9 @@ CanxiumSetting = BaseChainSetting(
     NETWORK_NAME=CANXIUM, GENESIS_FORK_VERSION=bytes.fromhex('00300300'),
     GENESIS_VALIDATORS_ROOT=bytes.fromhex('0000000000000000000000000000000000000000000000000000000000000000'))
 
-# Cerium setting
-CeriumSetting = BaseChainSetting(
-    NETWORK_NAME=CERIUM, GENESIS_FORK_VERSION=bytes.fromhex('00311300'),
+# PraseOdy setting
+PraseOdySetting = BaseChainSetting(
+    NETWORK_NAME=PRASEODY, GENESIS_FORK_VERSION=bytes.fromhex('00322300'),
     GENESIS_VALIDATORS_ROOT=bytes.fromhex('0000000000000000000000000000000000000000000000000000000000000000'))
 
 
@@ -59,7 +59,7 @@ ALL_CHAINS: Dict[str, BaseChainSetting] = {
     ZHEJIANG: ZhejiangSetting,
     HOLESKY: HoleskySetting,
     CANXIUM: CanxiumSetting,
-    CERIUM: CeriumSetting,
+    PRASEODY: PraseOdySetting,
 }
 
 
