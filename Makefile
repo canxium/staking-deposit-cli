@@ -1,7 +1,7 @@
 VENV_NAME?=venv
 VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
 PYTHON=${VENV_NAME}/bin/python3.8
-DOCKER_IMAGE="canxium/staking-deposit-cli:latest"
+DOCKER_IMAGE="canxium/staking-deposit-cli:v0.1"
 
 help:
 	@echo "clean - remove build and Python file artifacts"
